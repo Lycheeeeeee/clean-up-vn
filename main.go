@@ -20,6 +20,7 @@ func main() {
 	router.HandleFunc("/api/project/getall", controllers.GetAllProjects).Methods("GET")
 	router.HandleFunc("/api/project/inputresult/{id}", controllers.InputResult).Methods("PUT")
 	router.HandleFunc("/api/userproject/adduser", controllers.CreateUserProject).Methods("POST")
+	router.HandleFunc("/api/userproject/leaveproject", controllers.DeleteUserProject).Methods("POST")
 	//port := os.Getenv("PORT") //Get port from .env file, we did not specify any port so this should return an empty string when tested locally
 	//if port == "" {
 	//port = 8000 //localhost

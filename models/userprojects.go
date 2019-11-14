@@ -52,3 +52,10 @@ func (userproject *UserProject) CreateUserProject() map[string]interface{} {
 	response["userproject"] = userproject
 	return response
 }
+
+func (userproject *UserProject) LeaveProject() map[string]interface{} {
+	GetDB().Delete(userproject)
+	response := u.Message(true, "User has been removed from the project")
+	response["userproject"] = userproject
+	return response
+}

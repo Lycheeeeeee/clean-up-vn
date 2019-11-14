@@ -19,3 +19,15 @@ var CreateUserProject = func(w http.ResponseWriter, r *http.Request) {
 	resp := userproject.CreateUserProject()
 	u.Respond(w, resp)
 }
+
+var DeleteUserProject = func(w http.ResponseWriter, r *http.Request) {
+
+	userproject := &models.UserProject{}
+	err := json.NewDecoder(r.Body).Decode(userproject)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Invalid request"))
+		return
+	}
+	resp := userproject.LeaveProject()
+	u.Respond(w, resp)
+}
