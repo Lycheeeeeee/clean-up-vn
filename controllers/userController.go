@@ -62,3 +62,12 @@ var UpdateUser = func(w http.ResponseWriter, r *http.Request) {
 	resp := user.UpdateSub()
 	u.Respond(w, resp)
 }
+
+var DownloadByte = func(w http.ResponseWriter, r *http.Request){
+	
+
+
+
+
+
+}

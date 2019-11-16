@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -26,7 +27,6 @@ const (
 )
 
 func AddFileToS3(s *session.Session, fileDir string) error {
-
 	file, err := os.Open(fileDir)
 	if err != nil {
 		return err
@@ -81,7 +81,20 @@ func (project *Project) Create() map[string]interface{} {
 	response := u.Message(true, "Project has been created")
 	response["project"] = project
 	fileName := "project_num_" + strconv.FormatUint(uint64(project.ID), 10) + ".csv"
-	os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0666)
+	// os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0666)
+	dir := "s3File"
+	filePath := filepath.Join(dir, fileName)
+	if _, err := os.Stat(dir); err != nil {
+		if os.IsNotExist(err) {
+			panic("directory does not exist")
+		}
+	}
+	fmt.Printf("creating file:%v", fileName)
+	_, err := os.Create(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("done")
 	s, err := session.NewSession(&aws.Config{
 		Region: aws.String(S3_REGION),
 		Credentials: credentials.NewStaticCredentials(
@@ -92,11 +105,14 @@ func (project *Project) Create() map[string]interface{} {
 	}
 
 	// Upload
-	err = AddFileToS3(s, fileName)
+	err = AddFileToS3(s, filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	err = os.Remove(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return response
 }
 
@@ -122,4 +138,12 @@ func (project *Project) InputResultNCloseProject() map[string]interface{} {
 	response := u.Message(true, "Project has been updated")
 	response["project"] = project
 	return response
+}
+
+func (project *Project) GetVolunteerList(owner uint) (result []byte, err error) {
+	if project.Owner == owner {
+		var s = strconv.FormatUint(uint64(project.ID), 10)
+		return ReadFileFromS3("s3File/project_num" + s + ".csv")
+	}
+	return
 }

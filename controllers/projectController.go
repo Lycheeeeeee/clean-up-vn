@@ -12,7 +12,6 @@ import (
 )
 
 var CreateProject = func(w http.ResponseWriter, r *http.Request) {
-
 	pro := &models.Project{}
 	// layout := "2006-01-02T15:04:05.000Z"
 	// str := r.Body.time
@@ -68,4 +67,15 @@ var InputResult = func(w http.ResponseWriter, r *http.Request) {
 	project.Status = "close"
 	resp := project.InputResultNCloseProject()
 	u.Respond(w, resp)
+}
+var DownloadFile = func(w http.ResponseWriter, r *http.Request){
+	params := mux.Vars(r)
+	project := &models.Project{}
+	err := json.NewDecoder(r.Body).Decode(project) //decode the request body into struct and failed if any error occur
+	if err != nil {
+		u.Respond(w, u.Message(false, "Invalid request"))
+		return
+	}
+	
+
 }
