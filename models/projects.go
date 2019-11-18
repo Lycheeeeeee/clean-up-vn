@@ -140,10 +140,31 @@ func (project *Project) InputResultNCloseProject() map[string]interface{} {
 	return response
 }
 
-func (project *Project) GetVolunteerList(owner uint) (result []byte, err error) {
+func (project *Project) GetVolunteerList(owner uint) map[string]interface{} {
 	if project.Owner == owner {
-		var s = strconv.FormatUint(uint64(project.ID), 10)
-		return ReadFileFromS3("s3File/project_num" + s + ".csv")
+		var projectnum = strconv.FormatUint(uint64(project.ID), 10)
+		// return ReadFileFromS3("s3File/project_num_" + s + ".csv")
+		s, err := session.NewSession(&aws.Config{
+			Region: aws.String(S3_REGION),
+			Credentials: credentials.NewStaticCredentials(
+				AwsID, AwsKey, ""), // token can be left blank for now
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		svc := s3.New(s)
+		req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
+			Bucket: aws.String(S3_BUCKET),
+			Key:    aws.String("s3File/project_num_" + projectnum + ".csv"),
+		})
+		urlStr, err := req.Presign(15 * time.Minute)
+		if err != nil {
+			log.Println("Failed to sign request", err)
+		}
+		response := u.Message(true, "Successful generate presigned url for s3 file downloading")
+		response["presignedurl"] = urlStr
+		return response
 	}
-	return
+
+	return nil
 }

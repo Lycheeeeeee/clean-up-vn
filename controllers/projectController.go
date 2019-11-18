@@ -68,14 +68,48 @@ var InputResult = func(w http.ResponseWriter, r *http.Request) {
 	resp := project.InputResultNCloseProject()
 	u.Respond(w, resp)
 }
-var DownloadFile = func(w http.ResponseWriter, r *http.Request){
+var DownloadFile = func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+	// var b bytes.Buffer
 	project := &models.Project{}
 	err := json.NewDecoder(r.Body).Decode(project) //decode the request body into struct and failed if any error occur
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid request"))
 		return
 	}
-	
+	// u64, err := strconv.ParseUint(params["userid"], 10, 32)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// ownerID := uint(u64)
+	// resp, err := project.GetVolunteerList(ownerID)
+	// if err != nil {
+	// 	u.Respond(w, u.Message(false, "Invalid request"))
+	// }
+	// fileName := "project_num_" + strconv.FormatUint(uint64(project.ID), 10) + ".csv"
+	// dir := "s3File"
+	// filePath := filepath.Join(dir, fileName)
 
+	// _, err = os.Create(filePath)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// err = ioutil.WriteFile(filePath, resp, 0644)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+	// wr := multipart.NewWriter(&b)
+	// if _, err := wr.CreateFormFile("volunteerlist.csv", filePath); err != nil {
+	// 	log.Println(err)
+	// }
+	// wr.Close()
+	u64, err := strconv.ParseUint(params["userid"], 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	userID := uint(u64)
+	res := project.GetVolunteerList(userID)
+	u.Respond(w, res)
 }
