@@ -1,14 +1,16 @@
 -- +goose Up
 -- SQL in this section is executed when the migration is applied.
 CREATE TABLE "users" (
-  "id" integer,
+  "id" SERIAL NOT NULL PRIMARY KEY,
   "created_at" timestamptz DEFAULT now(),
   "deleted_at" timestamptz,
   "updated_at" timestamptz,
-  "displayname" varchar(200) NOT NULL,
+  "social" varchar,
+  "displayname" varchar(200),
   "email" varchar(200),
-  "issubscribed" boolean,
-  PRIMARY KEY ("id")
+  "password" varchar,
+  "token" varchar,
+  "issubscribed" boolean
 );
 
 INSERT INTO users(id, displayname, email, issubscribed) VALUES (123456,'aws', 'khanhniii07@gmail.com',false);

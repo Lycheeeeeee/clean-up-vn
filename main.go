@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Lycheeeeeee/clean-up-vn/app"
 	"github.com/Lycheeeeeee/clean-up-vn/controllers"
 	"github.com/gorilla/mux"
 )
@@ -11,6 +12,10 @@ import (
 func main() {
 
 	router := mux.NewRouter()
+	router.Use(app.JwtAuthentication) //attach JWT auth middleware
+	router.HandleFunc("/api/user/new", controllers.CreateAccount).Methods("POST")
+    router.HandleFunc("/api/user/login", controllers.Authenticate).Methods("POST")
+ 	router.HandleFunc("/api/user/sociallogin/{id}", controllers.Socialauthenticate).Methods("GET")
 	router.HandleFunc("/api/user/create", controllers.CreateUser).Methods("POST")
 	router.HandleFunc("/api/user/getone/{id}", controllers.GetUserByID).Methods("GET")
 	router.HandleFunc("/api/user/getall", controllers.GetAllUsers).Methods("GET")

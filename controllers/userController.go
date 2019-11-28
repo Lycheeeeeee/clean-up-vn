@@ -63,11 +63,41 @@ var UpdateUser = func(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, resp)
 }
 
-var DownloadByte = func(w http.ResponseWriter, r *http.Request){
-	
+var CreateAccount = func(w http.ResponseWriter, r *http.Request) {
 
+	user := &models.User{}
+	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
+	if err != nil {
+		u.Respond(w, u.Message(false, "Invalid request"))
+		return
+	}
 
+	resp := user.CreateAccount() //Create account
+	u.Respond(w, resp)
+}
 
+var Authenticate = func(w http.ResponseWriter, r *http.Request) {
 
+	user := &models.User{}
+	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
+	if err != nil {
+		u.Respond(w, u.Message(false, "Invalid request"))
+		return
+	}
 
+	resp := models.Login(user.Email, user.Password)
+	u.Respond(w, resp)
+}
+
+var Socialauthenticate = func(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userdata := models.GetTokenFromSocial(params["id"])
+	if userdata == nil {
+		resp := u.Message(false, "Invalid Id")
+		u.Respond(w, resp)
+	} else {
+		resp := u.Message(true, "success")
+		resp["userdata"] = userdata
+		u.Respond(w, resp)
+	}
 }
