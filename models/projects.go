@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	u "github.com/Lycheeeeeee/clean-up-vn/utils"
@@ -15,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
@@ -74,11 +76,70 @@ type Project struct {
 	Status      string    `json:"status"`
 	Time        time.Time `json:"time"`
 	Result      int       `json:"result"`
+	TopicArn    string    `json:"topic_arn"`
 }
 
-func (project *Project) Create() map[string]interface{} {
+func TimeDecoder(timer string) time.Time {
+	var year, month, date, hour, min int
+	stage1 := strings.Split(timer, "T")
+	for i := 0; i < len(stage1); i++ {
+		if i == 0 {
+			stage2 := strings.Split(stage1[0], "-")
+			year, _ = strconv.Atoi(stage2[0])
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+			month, _ = strconv.Atoi(stage2[1])
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+			date, _ = strconv.Atoi(stage2[2])
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+		}
+		if i == 1 {
+			stage3 := strings.Split(stage1[1], ":")
+			hour, _ = strconv.Atoi(stage3[0])
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+			min, _ = strconv.Atoi(stage3[1])
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+		}
+	}
+	then := time.Date(
+		year, time.Month(month), date, hour, min, 00, 000000000, time.UTC)
+
+	return then
+}
+
+func (project *Project) Create(timer string) map[string]interface{} {
+	project.Time = TimeDecoder(timer)
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(S3_REGION),
+		Credentials: credentials.NewStaticCredentials(
+			AwsID, AwsKey, ""), // token can be left blank for now
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	svc := sns.New(sess)
+	dater := strings.Split(project.Time.String(), " ")
+	topicName := strconv.Itoa(int(project.ID)) + "_" + dater[0]
+
+	result, err := svc.CreateTopic(&sns.CreateTopicInput{
+		Name: aws.String(topicName),
+	})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	project.TopicArn = *result.TopicArn
 	GetDB().Create(project)
-	response := u.Message(true, "Project has been created")
+	response := u.Message(true, "Project has been created successfully")
 	response["project"] = project
 	fileName := "project_num_" + strconv.FormatUint(uint64(project.ID), 10) + ".csv"
 	// os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0666)
@@ -90,8 +151,8 @@ func (project *Project) Create() map[string]interface{} {
 		}
 	}
 	fmt.Printf("creating file:%v", fileName)
-	_, err := os.Create(filePath)
-	if err != nil {
+	_, er := os.Create(filePath)
+	if er != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("done")
@@ -113,6 +174,7 @@ func (project *Project) Create() map[string]interface{} {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return response
 }
 
@@ -167,4 +229,46 @@ func (project *Project) GetVolunteerList(owner uint) map[string]interface{} {
 	}
 
 	return nil
+}
+
+func TestNotification() map[string]interface{} {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(S3_REGION),
+		Credentials: credentials.NewStaticCredentials(
+			AwsID, AwsKey, ""), // token can be left blank for now
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	svc := sns.New(sess)
+	result, err := svc.CreateTopic(&sns.CreateTopicInput{
+		Name: aws.String("Testing_purpose"),
+	})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	// _, err = svc.SetTopicAttributes(&sns.SetTopicAttributesInput{
+	// 	AttributeName: aws.String("Topic 1"),
+	// 	TopicArn:      aws.String("arn:aws:sns:ap-southeast-1:429048041589:Testingpurpose"),
+	// })
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// }
+
+	// result, err := svc.Subscribe(&sns.SubscribeInput{
+	// 	Endpoint:              aws.String("khanhniii07@gmail.com"),
+	// 	Protocol:              aws.String("email"),
+	// 	ReturnSubscriptionArn: aws.Bool(true),
+	// 	TopicArn:              aws.String("arn:aws:sns:ap-southeast-1:429048041589:Testingpurpose"),
+	// })
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// }
+
+	response := u.Message(true, "Successful")
+	response["topicarn"] = *result.TopicArn
+	// response["subscriptionArn"] = *result.SubscriptionArn
+	return response
 }

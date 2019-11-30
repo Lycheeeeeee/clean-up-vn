@@ -64,7 +64,7 @@ var UpdateUser = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var CreateAccount = func(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	user := &models.User{}
 	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
 	if err != nil {
@@ -77,7 +77,7 @@ var CreateAccount = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var Authenticate = func(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	user := &models.User{}
 	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
 	if err != nil {
@@ -90,6 +90,7 @@ var Authenticate = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var Socialauthenticate = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	userdata := models.GetTokenFromSocial(params["id"])
 	if userdata == nil {

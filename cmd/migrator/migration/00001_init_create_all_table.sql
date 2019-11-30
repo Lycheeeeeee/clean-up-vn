@@ -7,6 +7,7 @@ CREATE TABLE "users" (
   "updated_at" timestamptz,
   "social" varchar,
   "displayname" varchar(200),
+  "phonenumber" varchar(30),
   "email" varchar(200),
   "password" varchar,
   "token" varchar,
@@ -27,6 +28,7 @@ CREATE TABLE "projects"(
   "owner" integer REFERENCES users(id),
   "longtitude" float,
   "latitude" float,
+  "topic_arn" varchar,
   "status" varchar(20),
   "time" timestamptz,
   "result" integer 

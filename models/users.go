@@ -19,6 +19,7 @@ type User struct {
 	gorm.Model
 	Social       string `json:"social"`
 	Displayname  string `json:"displayname"`
+	Phonenumber  string `json:"phonenumber"`
 	Email        string `json:"email"`
 	Password     string `json:"password"`
 	Issubscribed bool   `json:"issubscribed"`

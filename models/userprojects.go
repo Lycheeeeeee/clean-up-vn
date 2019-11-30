@@ -15,6 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/aws/aws-sdk-go/service/sns"
 )
 
 func check(e error) {
@@ -61,6 +62,37 @@ func ReadFileFromS3(fileName string) (b []byte, err error) {
 }
 
 func (userproject *UserProject) CreateUserProject() map[string]interface{} {
+	pro := &Project{}
+	err := GetDB().Table("projects").Where("id = ?", userproject.ID).First(pro).Error
+	if err != nil {
+		return nil
+	}
+
+	usr := &User{}
+	er := GetDB().Table("users").Where("id = ?", userproject.UserID).First(usr).Error
+	if er != nil {
+		return nil
+	}
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(S3_REGION),
+		Credentials: credentials.NewStaticCredentials(
+			AwsID, AwsKey, ""), // token can be left blank for now
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	svc := sns.New(sess)
+	_, e := svc.Subscribe(&sns.SubscribeInput{
+		Endpoint:              aws.String(usr.Email),
+		Protocol:              aws.String("email"),
+		ReturnSubscriptionArn: aws.Bool(true),
+		TopicArn:              aws.String(pro.TopicArn),
+	})
+	if e != nil {
+		fmt.Println(err.Error())
+	}
 	GetDB().Create(userproject)
 	response := u.Message(true, "User has been added to the project")
 	fileName := "project_num_" + strconv.FormatUint(uint64(userproject.ID), 10) + ".csv"
@@ -75,8 +107,6 @@ func (userproject *UserProject) CreateUserProject() map[string]interface{} {
 		log.Println(err)
 	}
 	//defer f.Close()
-	usr := &User{}
-	GetDB().Table("users").Where("id = ?", userproject.UserID).First(usr)
 
 	if _, err := f.WriteString(usr.Displayname + "," + usr.Email + "\n"); err != nil {
 		log.Println(err)

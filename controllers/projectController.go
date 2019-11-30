@@ -20,13 +20,14 @@ var CreateProject = func(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(err)
 	// }
 	// r.Body.time = t
+	params := mux.Vars(r)
 	err := json.NewDecoder(r.Body).Decode(pro) //decode the request body into struct and failed if any error occur
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid request"))
 		return
 	}
 
-	resp := pro.Create() //Create account
+	resp := pro.Create(params["time"]) //Create account
 	u.Respond(w, resp)
 }
 
@@ -50,7 +51,9 @@ var GetProjectByID = func(w http.ResponseWriter, r *http.Request) {
 		u.Respond(w, resp)
 	}
 }
-
+var Testing = func(w http.ResponseWriter, r *http.Request) {
+	u.Respond(w, models.TestNotification())
+}
 var InputResult = func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	project := &models.Project{}
