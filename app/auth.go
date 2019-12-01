@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Lycheeeeeee/clean-up-vn/models"
 	u "github.com/Lycheeeeeee/clean-up-vn/utils"
-	"github.com/Lycheeeeeee/jwtoken/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
