@@ -21,11 +21,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-const (
+var (
 	S3_REGION = "ap-southeast-1"
 	S3_BUCKET = "elasticbeanstalk-ap-southeast-1-429048041589"
-	AwsID     = "AKIAJWFR247HPACDCOBA"
-	AwsKey    = "7npSdtT85NGkGpufy/If9s3pumRE8qleAyKHVG3y"
+	AwsID     = os.Getenv("id")
+	AwsKey    = os.Getenv("key")
 )
 
 func AddFileToS3(s *session.Session, fileDir string) error {
