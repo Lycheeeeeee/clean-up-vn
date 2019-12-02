@@ -12,6 +12,7 @@ import (
 )
 
 var CreateUser = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	user := &models.User{}
 	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
@@ -25,6 +26,7 @@ var CreateUser = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var GetUserByID = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 
 	userdata := models.GetUser(params["id"])
@@ -39,6 +41,7 @@ var GetUserByID = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var GetAllUsers = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	usersdata := models.GetAllUsers()
 	resp := u.Message(true, "success")
 	resp["usersdata"] = usersdata
@@ -46,6 +49,7 @@ var GetAllUsers = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var UpdateUser = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 
 	user := &models.User{}

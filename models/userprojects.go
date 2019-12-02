@@ -30,8 +30,9 @@ type UserInFile struct {
 }
 
 type UserProject struct {
-	ID     uint `gorm:"primary_key" json:"id"`
-	UserID uint `gorm:"primary_key" json:"user_id"`
+	ID          uint   `gorm:"primary_key" json:"id"`
+	ProjectName string `json:"projectname"`
+	UserID      uint   `gorm:"primary_key" json:"user_id"`
 }
 
 func ReadFileFromS3(fileName string) (b []byte, err error) {
@@ -213,3 +214,15 @@ func (userproject *UserProject) LeaveProject() map[string]interface{} {
 	response["userproject"] = userproject
 	return response
 }
+
+// func (user *User)Runreport() map[string]interface{} {
+// 	if user.ID ==1{
+
+// 	}
+
+// 	GetDB().Create(user)
+
+// 	response := u.Message(true, "User has been registered")
+// 	response["user"] = user
+// 	return response
+// }

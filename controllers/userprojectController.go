@@ -9,6 +9,7 @@ import (
 )
 
 var CreateUserProject = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	userproject := &models.UserProject{}
 	err := json.NewDecoder(r.Body).Decode(userproject)
@@ -21,6 +22,7 @@ var CreateUserProject = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var DeleteUserProject = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	userproject := &models.UserProject{}
 	err := json.NewDecoder(r.Body).Decode(userproject)

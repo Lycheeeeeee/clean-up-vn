@@ -12,6 +12,7 @@ import (
 )
 
 var CreateProject = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	pro := &models.Project{}
 	// layout := "2006-01-02T15:04:05.000Z"
 	// str := r.Body.time
@@ -32,6 +33,7 @@ var CreateProject = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var GetAllProjects = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	projectsdata := models.GetAllProjects()
 	resp := u.Message(true, "success")
 	resp["projectsdata"] = projectsdata
@@ -39,6 +41,7 @@ var GetAllProjects = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var GetProjectByID = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 
 	projectdata := models.GetProject(params["id"])
@@ -55,6 +58,7 @@ var Testing = func(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, models.TestNotification())
 }
 var InputResult = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	project := &models.Project{}
 	err := json.NewDecoder(r.Body).Decode(project) //decode the request body into struct and failed if any error occur
@@ -72,6 +76,7 @@ var InputResult = func(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, resp)
 }
 var DownloadFile = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	// var b bytes.Buffer
 	project := &models.Project{}
