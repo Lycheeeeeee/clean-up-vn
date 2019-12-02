@@ -20,7 +20,7 @@ import (
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
-
+var e = godotenv.Load()
 var (
 	S3_REGION = "ap-southeast-1"
 	S3_BUCKET = "elasticbeanstalk-ap-southeast-1-429048041589"
