@@ -31,7 +31,6 @@ type UserInFile struct {
 
 type UserProject struct {
 	ID          uint   `gorm:"primary_key" json:"id"`
-	ProjectName string `json:"projectname"`
 	UserID      uint   `gorm:"primary_key" json:"user_id"`
 }
 
