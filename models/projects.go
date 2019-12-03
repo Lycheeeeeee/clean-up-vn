@@ -131,7 +131,10 @@ func (project *Project) Create(timer string) map[string]interface{} {
 
 	svc := sns.New(sess)
 	dater := strings.Split(project.Time.String(), " ")
-	topicName := strconv.Itoa(int(project.ID)) + "_" + dater[0]
+	idtopic := strconv.FormatFloat(project.Longtitude+project.Latitude, 'f', 6, 64)
+        splitidtopic := strings.Split(idtopic, ".")
+        topicName := splitidtopic[0]+ splitidtopic[1] + "_" + dater[0]
+
 
 	result, err := svc.CreateTopic(&sns.CreateTopicInput{
 		Name: aws.String(topicName),
