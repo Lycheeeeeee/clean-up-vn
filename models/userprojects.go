@@ -30,8 +30,19 @@ type UserInFile struct {
 }
 
 type UserProject struct {
-	ID          uint   `gorm:"primary_key" json:"id"`
-	UserID      uint   `gorm:"primary_key" json:"user_id"`
+	ID     uint `gorm:"primary_key" json:"id"`
+	UserID uint `gorm:"primary_key" json:"user_id"`
+}
+
+type ReportOne struct {
+	Name   string
+	Fre    int
+	Result int
+}
+
+type ReportAll struct {
+	Numvol  int
+	Numtras int
 }
 
 func ReadFileFromS3(fileName string) (b []byte, err error) {
@@ -214,14 +225,14 @@ func (userproject *UserProject) LeaveProject() map[string]interface{} {
 	return response
 }
 
-// func (user *User)Runreport() map[string]interface{} {
-// 	if user.ID ==1{
+func RunReport() map[string]interface{} {
+	var reportone ReportOne
+	var reportall ReportAll
 
-// 	}
-
-// 	GetDB().Create(user)
-
-// 	response := u.Message(true, "User has been registered")
-// 	response["user"] = user
-// 	return response
-// }
+	GetDB().Raw("SELECT b.name,a.fre,b.result FROM (SELECT user_projects.id as id,COUNT(user_projects.id) as fre FROM user_projects GROUP BY user_projects.id) as a LEFT JOIN (SELECT projects.id as id, projects.name as name, projects.result as result FROM projects) as b ON a.id = b.id").Scan(&reportone)
+	GetDB().Raw("SELECT SUM(a.fre) as numvol,SUM(b.result) as numtras  FROM (SELECT user_projects.id as id,COUNT(user_projects.id) as fre FROM user_projects GROUP BY user_projects.id) as a LEFT JOIN (SELECT projects.id as id, projects.name as name, projects.result as result FROM projects) as b ON a.id = b.id").Scan(&reportall)
+	response := u.Message(true, "Report has been gathered")
+	response["report"] = reportone
+	response["total"] = reportall
+	return response
+}

@@ -18,8 +18,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 	uuid "github.com/satori/go.uuid"
 )
+
 var e = godotenv.Load()
 var (
 	S3_REGION = "ap-southeast-1"
@@ -242,33 +244,26 @@ func TestNotification() map[string]interface{} {
 	}
 
 	svc := sns.New(sess)
-	result, err := svc.CreateTopic(&sns.CreateTopicInput{
-		Name: aws.String("Testing_purpose"),
-	})
+	result, err := svc.ListTopics(nil)
 	if err != nil {
 		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 
-	// _, err = svc.SetTopicAttributes(&sns.SetTopicAttributesInput{
-	// 	AttributeName: aws.String("Topic 1"),
-	// 	TopicArn:      aws.String("arn:aws:sns:ap-southeast-1:429048041589:Testingpurpose"),
-	// })
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// }
-
-	// result, err := svc.Subscribe(&sns.SubscribeInput{
-	// 	Endpoint:              aws.String("khanhniii07@gmail.com"),
-	// 	Protocol:              aws.String("email"),
-	// 	ReturnSubscriptionArn: aws.Bool(true),
-	// 	TopicArn:              aws.String("arn:aws:sns:ap-southeast-1:429048041589:Testingpurpose"),
-	// })
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// }
-
 	response := u.Message(true, "Successful")
-	response["topicarn"] = *result.TopicArn
-	// response["subscriptionArn"] = *result.SubscriptionArn
+	for i, t := range result.Topics {
+		splitstring := strings.Split(*t.TopicArn, "_")
+		mes := "Remember to help us green our earth at " + splitstring[1] + " GMT007"
+		resu, err := svc.Publish(&sns.PublishInput{
+			Message:  aws.String(mes),
+			TopicArn: aws.String(*t.TopicArn),
+		})
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+		responsename := "ID-" + strconv.Itoa(i)
+		response[responsename] = *resu.MessageId
+	}
 	return response
 }

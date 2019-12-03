@@ -33,3 +33,8 @@ var DeleteUserProject = func(w http.ResponseWriter, r *http.Request) {
 	resp := userproject.LeaveProject()
 	u.Respond(w, resp)
 }
+var Report = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	resp := models.RunReport()
+	u.Respond(w, resp)
+}

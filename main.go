@@ -7,6 +7,7 @@ import (
 	"github.com/Lycheeeeeee/clean-up-vn/app"
 	"github.com/Lycheeeeeee/clean-up-vn/controllers"
 	"github.com/gorilla/mux"
+
 	// "github.com/gorilla/handlers"
 	"github.com/rs/cors"
 )
@@ -22,7 +23,7 @@ func main() {
 	//   })
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 		// Enable Debugging for testing, consider disabling in production
 		Debug: true,
@@ -44,7 +45,9 @@ func main() {
 	router.HandleFunc("/api/userproject/adduser", controllers.CreateUserProject).Methods("POST")
 	router.HandleFunc("/api/userproject/leaveproject", controllers.DeleteUserProject).Methods("POST")
 	router.HandleFunc("/api/project/downloadvolunteerlist/{userid}", controllers.DownloadFile).Methods("POST")
-	// router.HandleFunc("/api/project/testing", controllers.Testing).Methods("GET") 	
+	router.HandleFunc("/api/project/testing", controllers.Testing).Methods("GET")
+	router.HandleFunc("/api/report/runreport", controllers.Report).Methods("GET")
+
 	//port := os.Getenv("PORT") //Get port from .env file, we did not specify any port so this should return an empty string when tested locally
 	//if port == "" {
 	//port = 8000 //localhost

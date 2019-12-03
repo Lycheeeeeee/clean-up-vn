@@ -55,6 +55,7 @@ var GetProjectByID = func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 var Testing = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	u.Respond(w, models.TestNotification())
 }
 var InputResult = func(w http.ResponseWriter, r *http.Request) {
