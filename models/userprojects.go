@@ -236,3 +236,11 @@ func RunReport() map[string]interface{} {
 	response["total"] = reportall
 	return response
 }
+
+// func VolunteerNumber(id int) map[string]interface{} {
+// 	var numvol Numvol
+// 	GetDB().Raw("SELECT COUNT(user_project.user_id) as numvol FROM user_project WHERE user_project.ID = ?", id).Scan(&numvol)
+// 	response := u.Message(true, "Number volunteer has been gathered")
+// 	response["numvol"] = numvol
+// 	return response
+// }

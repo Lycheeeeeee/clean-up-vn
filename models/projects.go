@@ -22,6 +22,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+type Numvol struct {
+	Numvol int
+}
+
 var e = godotenv.Load()
 var (
 	S3_REGION = "ap-southeast-1"
@@ -132,9 +136,8 @@ func (project *Project) Create(timer string) map[string]interface{} {
 	svc := sns.New(sess)
 	dater := strings.Split(project.Time.String(), " ")
 	idtopic := strconv.FormatFloat(project.Longtitude+project.Latitude, 'f', 6, 64)
-        splitidtopic := strings.Split(idtopic, ".")
-        topicName := splitidtopic[0]+ splitidtopic[1] + "_" + dater[0]
-
+	splitidtopic := strings.Split(idtopic, ".")
+	topicName := splitidtopic[0] + splitidtopic[1] + "_" + dater[0]
 
 	result, err := svc.CreateTopic(&sns.CreateTopicInput{
 		Name: aws.String(topicName),
@@ -268,5 +271,12 @@ func TestNotification() map[string]interface{} {
 		responsename := "ID-" + strconv.Itoa(i)
 		response[responsename] = *resu.MessageId
 	}
+	return response
+}
+func GetVolNum(id int) map[string]interface{} {
+	numvol := &Numvol{}
+	GetDB().Raw("SELECT COUNT(user_project.user_id) as numvol FROM user_project WHERE user_project.ID = ?", id).Scan(numvol)
+	response := u.Message(true, "Number of volunteer has been gathered")
+	response["numvol"] = numvol
 	return response
 }

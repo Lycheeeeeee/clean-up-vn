@@ -122,3 +122,8 @@ var DownloadFile = func(w http.ResponseWriter, r *http.Request) {
 	res := project.GetVolunteerList(userID)
 	u.Respond(w, res)
 }
+
+var GetVolunteer = func(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	u.Respond(w, &models.GetVolNum(params["id"]))
+}

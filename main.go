@@ -47,6 +47,7 @@ func main() {
 	router.HandleFunc("/api/project/downloadvolunteerlist/{userid}", controllers.DownloadFile).Methods("POST")
 	router.HandleFunc("/api/project/testing", controllers.Testing).Methods("GET")
 	router.HandleFunc("/api/report/runreport", controllers.Report).Methods("GET")
+	router.HandleFunc("/api/project/numberofvolunteer/{id}", controllers.GetVolunteer).Methods("GET")
 
 	//port := os.Getenv("PORT") //Get port from .env file, we did not specify any port so this should return an empty string when tested locally
 	//if port == "" {
