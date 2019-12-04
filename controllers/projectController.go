@@ -40,19 +40,39 @@ var GetAllProjects = func(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, resp)
 }
 
+var GetAllProjectsByOwner = func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	params := mux.Vars(r)
+	projectsdata := models.GetProjectsByOwnerId(params["id"])
+	resp := u.Message(true, "success")
+	resp["projectsdata"] = projectsdata
+	u.Respond(w, resp)
+}
+var GetAllProjectsByUser = func(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	params := mux.Vars(r)
+	projectsdata := models.GetProjectsByUserId(params["id"])
+	resp := u.Message(true,"success")
+	resp["projectsdata"] = projectsdata
+	u.Respond(w,resp)
+}
+
 var GetProjectByID = func(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 
-	projectdata := models.GetProject(params["id"])
-	if projectdata == nil {
-		resp := u.Message(false, "Invalid Id")
-		u.Respond(w, resp)
-	} else {
-		resp := u.Message(true, "success")
-		resp["projectdata"] = projectdata
-		u.Respond(w, resp)
-	}
+	// projectdata := models.GetProject(params["id"])
+	// if projectdata == nil {
+	// 	resp := u.Message(false, "Invalid Id")
+	// 	u.Respond(w, resp)
+	// } else {
+	// 	resp := u.Message(true, "success")
+	// 	resp["projectdata"] = projectdata
+	// 	u.Respond(w, resp)
+	// }
+	res := models.GetProject(params["id"])
+	u.Respond(w, res)
+
 }
 var Testing = func(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -123,7 +143,3 @@ var DownloadFile = func(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
-var GetVolunteer = func(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	u.Respond(w, &models.GetVolNum(params["id"]))
-}

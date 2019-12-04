@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Lycheeeeeee/clean-up-vn/app"
 	"github.com/Lycheeeeeee/clean-up-vn/controllers"
 	"github.com/gorilla/mux"
 
@@ -15,7 +14,7 @@ import (
 func main() {
 
 	router := mux.NewRouter()
-	router.Use(app.JwtAuthentication)
+	// router.Use(app.JwtAuthentication)
 	// cors := cors.New(cors.Options{
 	// 	AllowedOrigins:   []string{"*"},
 	// 	AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -40,6 +39,8 @@ func main() {
 	router.HandleFunc("/api/user/update/{id}", controllers.UpdateUser).Methods("PUT")
 	router.HandleFunc("/api/project/create/{time}", controllers.CreateProject).Methods("POST")
 	router.HandleFunc("/api/project/getone/{id}", controllers.GetProjectByID).Methods("GET")
+	router.HandleFunc("/api/project/getallbyowner/{id}", controllers.GetAllProjectsByOwner).Methods("GET")
+	router.HandleFunc("/api/project/getallbyuser/{id}", controllers.GetAllProjectsByUser).Methods("GET")
 	router.HandleFunc("/api/project/getall", controllers.GetAllProjects).Methods("GET")
 	router.HandleFunc("/api/project/inputresult/{id}", controllers.InputResult).Methods("PUT")
 	router.HandleFunc("/api/userproject/adduser", controllers.CreateUserProject).Methods("POST")
@@ -47,7 +48,7 @@ func main() {
 	router.HandleFunc("/api/project/downloadvolunteerlist/{userid}", controllers.DownloadFile).Methods("POST")
 	router.HandleFunc("/api/project/testing", controllers.Testing).Methods("GET")
 	router.HandleFunc("/api/report/runreport", controllers.Report).Methods("GET")
-	router.HandleFunc("/api/project/numberofvolunteer/{id}", controllers.GetVolunteer).Methods("GET")
+	// router.HandleFunc("/api/project/numberofvolunteer/{id}", controllers.GetVolunteer).Methods("GET")
 
 	//port := os.Getenv("PORT") //Get port from .env file, we did not specify any port so this should return an empty string when tested locally
 	//if port == "" {
