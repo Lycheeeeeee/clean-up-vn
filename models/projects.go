@@ -203,7 +203,7 @@ func GetProject(u string) map[string]interface{} {
 	response := utils.Message(true, "Project data has been collected")
 	response["projectdata"] = pro
 	num := &Numvol{}
-	er := GetDB().Table("user_projects").Select("count(user_id) as num").Where("id = ? ", "2").First(num).Error
+	er := GetDB().Table("user_projects").Select("count(user_id) as num").Where("id = ? ", u).First(num).Error
 	if er != nil {
 		return nil
 	}
