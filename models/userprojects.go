@@ -226,7 +226,7 @@ func (userproject *UserProject) LeaveProject() map[string]interface{} {
 }
 
 func RunReport() map[string]interface{} {
-	var reportone ReportOne
+	reportone := make([]*ReportOne, 0)
 	var reportall ReportAll
 
 	GetDB().Raw("SELECT b.name,a.fre,b.result FROM (SELECT user_projects.id as id,COUNT(user_projects.id) as fre FROM user_projects GROUP BY user_projects.id) as a LEFT JOIN (SELECT projects.id as id, projects.name as name, projects.result as result FROM projects) as b ON a.id = b.id").Scan(&reportone)
