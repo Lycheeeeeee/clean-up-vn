@@ -194,16 +194,16 @@ func GetAllProjects() []*Project {
 	}
 	return pros
 }
-func GetProject(u string) map[string]interface{} {
+func GetProject(projectid string) map[string]interface{} {
 	pro := &Project{}
-	err := GetDB().Table("projects").Where("id = ?", u).First(pro).Error
+	err := GetDB().Table("projects").Where("id = ?", projectid).First(pro).Error
 	if err != nil {
 		return nil
 	}
-	response := utils.Message(true, "Project data has been collected")
+	response := u.Message(true, "Project data has been collected")
 	response["projectdata"] = pro
 	num := &Numvol{}
-	er := GetDB().Table("user_projects").Select("count(user_id) as num").Where("id = ? ", u).First(num).Error
+	er := GetDB().Table("user_projects").Select("count(user_id) as num").Where("id = ? ", projectid).First(num).Error
 	if er != nil {
 		return nil
 	}
@@ -287,6 +287,7 @@ func TestNotification() map[string]interface{} {
 	}
 	return response
 }
+
 // func GetVolNum(id int) map[string]interface{} {
 // 	numvol := &Numvol{}
 // 	GetDB().Raw("SELECT COUNT(user_project.user_id) as numvol FROM user_project WHERE user_project.ID = ?", id).Scan(numvol)
@@ -305,7 +306,7 @@ func GetProjectsByOwnerId(ownerid string) map[string]interface{} {
 func GetProjectsByUserId(userid string) map[string]interface{} {
 	pro := make([]*Project, 0)
 	// GetDB().Raw("SELECT projects.name, projects.longtitude, projects.latitude, projects.description, projects.owner, projects.status, projects.result,projects.time FROM user_projects LEFT JOIN projects ON user_projects.id = projects.id").Find(&pro)
-	GetDB().Table("projects").Select("projects.name, projects.longtitude, projects.latitude, projects.owner, projects.description, projects.status, projects.time, projects.result").Joins("left join user_projects  on user_projects.id = projects.id").Where("user_projects.user_id = ?", userid).Find(&pro)
+	GetDB().Table("projects").Select("projects.id, projects.name, projects.longtitude, projects.latitude, projects.owner, projects.description, projects.status, projects.time, projects.result").Joins("left join user_projects  on user_projects.id = projects.id").Where("user_projects.user_id = ?", userid).Find(&pro)
 	response := u.Message(true, "List of projects has been collected")
 	response["projects"] = pro
 	return response

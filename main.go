@@ -42,7 +42,7 @@ func main() {
 	router.HandleFunc("/api/project/getallbyowner/{id}", controllers.GetAllProjectsByOwner).Methods("GET")
 	router.HandleFunc("/api/project/getallbyuser/{id}", controllers.GetAllProjectsByUser).Methods("GET")
 	router.HandleFunc("/api/project/getall", controllers.GetAllProjects).Methods("GET")
-	router.HandleFunc("/api/project/inputresult/{id}", controllers.InputResult).Methods("PUT")
+	router.HandleFunc("/api/project/inputresult/{id}", controllers.InputResult).Methods("POST")
 	router.HandleFunc("/api/userproject/adduser", controllers.CreateUserProject).Methods("POST")
 	router.HandleFunc("/api/userproject/leaveproject", controllers.DeleteUserProject).Methods("POST")
 	router.HandleFunc("/api/project/downloadvolunteerlist/{userid}", controllers.DownloadFile).Methods("POST")
