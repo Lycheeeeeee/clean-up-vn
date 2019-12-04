@@ -61,7 +61,9 @@ func (user *User) CreateAccount() map[string]interface{} {
 			return u.Message(false, "Connection error. Please retry")
 		}
 		if temp.Social != "" {
-			return u.Message(false, "Social id has been registed")
+			response := u.Message(true, "Social id has been registed")
+			response["user"] = temp
+			return response
 		}
 
 		GetDB().Create(user)
