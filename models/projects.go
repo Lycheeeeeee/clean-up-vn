@@ -273,7 +273,14 @@ func TestNotification() map[string]interface{} {
 	response := u.Message(true, "Successful")
 	for i, t := range result.Topics {
 		splitstring := strings.Split(*t.TopicArn, "_")
-		mes := "Remember to help us green our earth at " + splitstring[1] + " GMT007"
+		mes := `Dear Volunteers!
+		
+		Earth day is coming. We are very appreciated with your intention in our events in order to make our world more beautiful.
+		Your decision can change the future world in positive ways. 
+		
+		Remember to help us green our earth at ` + splitstring[1] + " GMT007" +
+			`Best regards,
+		Clean Up Vietnam team`
 		resu, err := svc.Publish(&sns.PublishInput{
 			Message:  aws.String(mes),
 			TopicArn: aws.String(*t.TopicArn),
