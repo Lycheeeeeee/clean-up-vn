@@ -275,12 +275,12 @@ func TestNotification() map[string]interface{} {
 		splitstring := strings.Split(*t.TopicArn, "_")
 		mes := `Dear Volunteers!
 		
-		Earth day is coming. We are very appreciated with your intention in our events in order to make our world more beautiful.
-		Your decision can change the future world in positive ways. 
+Earth day is coming. We are very appreciated with your intention in our events in order to make our world more beautiful.
+Your decision can change the future world in positive ways. 
 		
-		Remember to help us green our earth at ` + splitstring[1] + " GMT007" +
+Remember to help us green our earth at ` + splitstring[1] + " GMT007\n" +
 			`Best regards,
-		Clean Up Vietnam team`
+			Clean Up Vietnam team`
 		resu, err := svc.Publish(&sns.PublishInput{
 			Message:  aws.String(mes),
 			TopicArn: aws.String(*t.TopicArn),
